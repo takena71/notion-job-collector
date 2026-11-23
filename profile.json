@@ -1,0 +1,234 @@
+{
+  "classification_mode": "keywords",
+  "exclude_graduate_degree_mentions": false,
+  "interests": [
+    {
+      "name": "영업·영업관리",
+      "title_keywords": [
+        "영업관리",
+        "국내영업",
+        "해외영업",
+        "B2B 영업",
+        "유통영업",
+        "영업",
+        "거래처관리",
+        "채널관리",
+        "세일즈",
+        "sales"
+      ],
+      "duty_all_keywords": [
+        "거래처",
+        "매출"
+      ]
+    },
+    {
+      "name": "온라인 MD",
+      "title_keywords": [
+        "온라인 MD",
+        "이커머스 MD",
+        "커머스 MD",
+        "채널 MD"
+      ],
+      "duty_all_keywords": [
+        "상품 등록",
+        "기획전"
+      ]
+    },
+    {
+      "name": "오프라인 MD",
+      "title_keywords": [
+        "오프라인 MD",
+        "매장 MD",
+        "리테일 MD"
+      ],
+      "duty_all_keywords": [
+        "매장",
+        "상품 소싱"
+      ]
+    },
+    {
+      "name": "일본 온라인 AMD",
+      "title_keywords": [
+        "일본 온라인 AMD",
+        "일본 온라인 채널(Amazon) AMD",
+        "일본 이커머스 AMD"
+      ],
+      "duty_all_keywords": [
+        "일본",
+        "상품 리스팅",
+        "재고"
+      ]
+    },
+    {
+      "name": "AMD",
+      "title_keywords": [
+        "AMD",
+        "Assistant MD",
+        "MD 보조"
+      ],
+      "duty_all_keywords": [
+        "상품 리스팅",
+        "재고"
+      ]
+    },
+    {
+      "name": "서비스 기획",
+      "title_keywords": [
+        "서비스기획",
+        "서비스 기획",
+        "서비스 PM",
+        "프로덕트 매니저",
+        "프로덕트 오너"
+      ],
+      "duty_all_keywords": [
+        "서비스",
+        "요구사항",
+        "기획"
+      ]
+    },
+    {
+      "name": "상품 기획",
+      "title_keywords": [
+        "상품 기획",
+        "상품기획",
+        "제품기획"
+      ],
+      "duty_all_keywords": [
+        "시장 조사",
+        "상품 개발"
+      ]
+    },
+    {
+      "name": "영업 기획",
+      "title_keywords": [
+        "영업 기획",
+        "영업기획",
+        "영업전략",
+        "세일즈 기획"
+      ],
+      "duty_all_keywords": [
+        "영업 전략",
+        "매출"
+      ]
+    },
+    {
+      "name": "브랜드 마케팅",
+      "title_keywords": [
+        "브랜드 마케팅",
+        "브랜드마케팅",
+        "브랜드 매니저",
+        "브랜드 전략"
+      ],
+      "duty_all_keywords": [
+        "브랜드 포지셔닝",
+        "캠페인"
+      ]
+    },
+    {
+      "name": "콘텐츠 마케팅",
+      "title_keywords": [
+        "콘텐츠 마케팅",
+        "콘텐츠마케팅",
+        "콘텐츠·SNS",
+        "콘텐츠 마케터",
+        "SNS 마케팅"
+      ],
+      "duty_all_keywords": [
+        "콘텐츠 기획",
+        "콘텐츠 제작"
+      ]
+    },
+    {
+      "name": "퍼포먼스 마케팅",
+      "title_keywords": [
+        "퍼포먼스 마케팅",
+        "퍼포먼스마케팅",
+        "퍼포먼스 마케터",
+        "그로스 마케터"
+      ],
+      "duty_all_keywords": [
+        "광고 운영",
+        "전환율"
+      ]
+    },
+    {
+      "name": "CRM 마케팅",
+      "title_keywords": [
+        "CRM 마케팅",
+        "CRM마케팅",
+        "CRM 마케터",
+        "리텐션 마케팅"
+      ],
+      "duty_all_keywords": [
+        "고객 여정",
+        "캠페인"
+      ]
+    },
+    {
+      "name": "온라인 마케팅",
+      "title_keywords": [
+        "온라인 마케팅",
+        "온라인마케팅",
+        "디지털 마케팅",
+        "디지털마케팅"
+      ],
+      "duty_all_keywords": [
+        "온라인 채널",
+        "캠페인"
+      ]
+    },
+    {
+      "name": "마케팅 전략·기획",
+      "title_keywords": [
+        "마케팅 전략",
+        "마케팅전략",
+        "마케팅 기획",
+        "마케팅기획"
+      ],
+      "duty_all_keywords": [
+        "마케팅 전략",
+        "시장 분석"
+      ]
+    },
+    {
+      "name": "MD",
+      "title_keywords": [
+        "MD",
+        "머천다이저"
+      ],
+      "duty_all_keywords": [
+        "상품",
+        "소싱"
+      ]
+    },
+    {
+      "name": "마케팅",
+      "title_keywords": [
+        "마케팅",
+        "마케터"
+      ],
+      "duty_all_keywords": [
+        "마케팅",
+        "성과"
+      ]
+    }
+  ],
+  "allow_experienced": true,
+  "target_regions": [
+    "서울",
+    "경기"
+  ],
+  "education": "학사 지원 가능",
+  "sources": [
+    {
+      "key": "jasoseol",
+      "name": "자소설닷컴",
+      "url": "https://jasoseol.com/recruit"
+    },
+    {
+      "key": "saramin-home",
+      "name": "사람인 국내채용",
+      "url": "https://www.saramin.co.kr/zf_user/jobs/list/domestic"
+    }
+  ]
+}
