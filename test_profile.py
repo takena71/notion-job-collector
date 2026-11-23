@@ -81,6 +81,11 @@ class EligibilityTests(unittest.TestCase):
             result = egong_roles("콘텐츠 마케팅 인턴", html, "https://example.org", location="서울", education="학력무관")
         self.assertEqual(result[0][1][0], "콘텐츠 마케팅")
 
+    def test_accounting_sales_terms_do_not_mean_sales_role(self):
+        title = "제로투엔 재무본부 신입 및 경력 채용(회계·세무·자금·금융)"
+        self.assertEqual(classify_interest(title, ["거래처 매출 집계 및 정산"])[0], "직무 제외")
+        self.assertEqual(classify_interest("영업관리", ["거래처 매출 관리"])[0], "영업·영업관리")
+
     def test_saramin_regular_results_only(self):
         from bs4 import BeautifulSoup
         from collectors import listing_cards

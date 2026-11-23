@@ -58,6 +58,13 @@ def classify_interest(title, duties, profile=None, industry=""):
                      for group in profile["interests"] for keyword in group.get("title_keywords", [])
                      if title_matches(keyword)), default=None):
         return match[1], "직무명 일치: " + title
+    # 회계의 매출 집계·거래처 정산은 영업 담당업무와 구분한다.
+    unrelated_role = re.search(
+        r"회계|세무|재무|자금|금융|경리|인사|총무|법무|개발자|디자이너|건축|시공|간호|상담원",
+        title,
+    )
+    if unrelated_role:
+        return "직무 제외", "다른 직무가 명시됨: " + unrelated_role.group()
     for group in profile["interests"]:
         keywords = group.get("duty_all_keywords", [])
         if keywords and all(normalize(k) in duty_text for k in keywords):
