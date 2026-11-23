@@ -216,9 +216,10 @@ class NotionClient:
 
     def validate_schema(self):
         schema = self.request("GET", "data_sources/" + self.data_source_id)["properties"]
-        invalid = [name for name, kind in SCHEMA.items() if schema.get(name, {}).get("type") != kind]
+        invalid = [name for name, kind in SCHEMA.items() if schema.get(name, {}).get("type") not in ({"status", "select"} if name == "지원 상태" else {kind})]
         options = {o["name"] for o in schema.get("관심 분야", {}).get("select", {}).get("options", [])}
-        statuses = {o["name"] for o in schema.get("지원 상태", {}).get("status", {}).get("options", [])}
+        self.status_type = schema.get("지원 상태", {}).get("type", "status")
+        statuses = {o["name"] for o in schema.get("지원 상태", {}).get(self.status_type, {}).get("options", [])}
         if invalid or not set(FIELDS.values()) <= options or "검토 전" not in statuses:
             raise NotionError("수집함 열/옵션이 예상과 다릅니다: " + ", ".join(invalid))
 
@@ -285,6 +286,8 @@ class NotionClient:
             return "요약 제외", {"url": posting["url"]}
         existing = self.find_existing(posting)
         payload = {"properties": properties_for(posting, existing)}
+        if not existing:
+            payload["properties"]["지원 상태"] = {getattr(self, "status_type", "status"): {"name": "검토 전"}}
         if existing:
             page = self.request("PATCH", "pages/" + existing["id"], payload)
             self.remember_write(page)
@@ -293,7 +296,7 @@ class NotionClient:
         # 같은 직무의 기존 행은 위에서 상태·본문을 보존하며 갱신한다.
         applied = next((row for row in self.read_rows()
                         if company_key(property_text(row["properties"], "회사")) == company_key(posting["company"])
-                        and ((row["properties"].get("지원 상태", {}).get("status") or {}).get("name", "").replace(" ", "") == "지원완료")), None)
+                        and ((row["properties"].get("지원 상태", {}).get("status") or row["properties"].get("지원 상태", {}).get("select") or {}).get("name", "").replace(" ", "") == "지원완료")), None)
         if applied:
             return "지원 회사 제외", {"url": applied.get("url", "")}
         incoming = identity_record(posting)
