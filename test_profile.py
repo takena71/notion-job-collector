@@ -30,7 +30,7 @@ class ProfileTests(unittest.TestCase):
         from collectors import collect_site
         from profile_config import PROFILE
         field = PROFILE["interests"][0]["name"]
-        card = {"id": "123", "company": "예시회사", "title": "신입", "career": "신입", "url": "https://example.org/jobs/123"}
+        card = {"id": "123", "company": "예시회사", "company_size": "대기업", "title": "신입", "career": "신입", "url": "https://example.org/jobs/123"}
         detail = ("예시회사", "채용", [("콘텐츠 마케팅", (field, "직무명 일치"))], None)
         with patch.dict("collectors.NEW_SITES", {"saramin-home": ("예시 목록", "https://example.org/jobs")}), patch("collectors.saramin_detail", return_value=detail):
             postings, report = collect_site("saramin-home", recheck_cards=[card])

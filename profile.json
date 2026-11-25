@@ -230,5 +230,6 @@
       "name": "사람인 국내채용",
       "url": "https://www.saramin.co.kr/zf_user/jobs/list/domestic"
     }
-  ]
+  ],
+  "prefer_large_public_recruitment": true
 }

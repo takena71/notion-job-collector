@@ -267,7 +267,7 @@ def saramin_detail(reader, card, split_roles=False):
                                            "view_type": "mail_landing", "t_ref": "non-logged_relay_view",
                                            "t_ref_content": "category_new_rec"}).encode(), referer=card["url"])
         scope = soup.select_one(f"section.jview-0-{card['id']}")
-    card["company_size"] = company_size(scope or soup)
+    card["company_size"] = company_size(soup)
     soup = scope or soup
     company = text(soup.select_one(".jv_header .company,.jv_header .corp_name")) or card["company"]
     title = text(soup.select_one("h1.tit_job")) or card["title"]
@@ -382,6 +382,12 @@ def collect_site(key, limit=50, max_pages=5, *, recheck_cards=None):
         company, title = company or card.get("company", ""), title or card["title"]
         if result in INTEREST_FIELDS and not company:
             result, evidence = "수집 제외", "회사명 미확인"
+        if result in INTEREST_FIELDS and PROFILE.get("prefer_large_public_recruitment"):
+            size = card.get("company_size", "")
+            public = bool(re.search(r"공채|공개\s*채용|신입사원\s*(?:모집|채용)|대졸\s*신입", title))
+            large = bool(re.search(r"대기업|중견기업", size))
+            if not large and not public:
+                result, evidence = "검토 필요", "대기업·중견기업 또는 공채 근거 미확인 | " + (size or "회사 규모 미확인")
         counts[result] += 1
         audit.append(dict(id=source_id or card["id"], company=company, title=title,
                           url=card["url"], result=result, evidence=evidence))
@@ -516,6 +522,8 @@ def collect_site(key, limit=50, max_pages=5, *, recheck_cards=None):
                 cards = listing_cards(key, soup)
                 if not cards:
                     raise CollectionError("목록에서 일반 검색 결과 공고 링크를 읽지 못함")
+                if PROFILE.get("prefer_large_public_recruitment"):
+                    cards.sort(key=lambda card: not bool(re.search(r"공채|공개\s*채용|신입사원|대졸\s*신입", card["title"])))
                 fresh = [card for card in cards if card["id"] not in seen]
                 if not fresh:
                     raise CollectionError("페이지 이동 후 새 공고를 읽지 못함")
