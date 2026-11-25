@@ -223,14 +223,15 @@ class NotionClient:
         if "회사 규모" not in schema:
             self.request("PATCH", "data_sources/" + self.data_source_id,
                          {"properties": {"회사 규모": {"rich_text": {}}}})
-        elif schema["회사 규모"].get("type") != "rich_text":
-            raise NotionError("회사 규모 속성은 텍스트 유형이어야 합니다.")
+        elif schema["회사 규모"].get("type") not in {"rich_text", "select"}:
+            raise NotionError("회사 규모 속성은 텍스트 또는 선택 유형이어야 합니다.")
+        self.company_size_type = schema.get("회사 규모", {}).get("type", "rich_text")
         invalid = [name for name, kind in SCHEMA.items() if schema.get(name, {}).get("type") not in ({"status", "select"} if name == "지원 상태" else {kind})]
         options = {o["name"] for o in schema.get("관심 분야", {}).get("select", {}).get("options", [])}
         if "회사 규모" not in schema:
             self.request("PATCH", "data_sources/" + self.data_source_id,
                          {"properties": {"회사 규모": {"rich_text": {}}}})
-        elif schema["회사 규모"].get("type") != "rich_text":
+        elif schema["회사 규모"].get("type") not in {"rich_text", "select"}:
             invalid.append("회사 규모")
         self.status_type = schema.get("지원 상태", {}).get("type", "status")
         statuses = {o["name"] for o in schema.get("지원 상태", {}).get(self.status_type, {}).get("options", [])}
@@ -300,6 +301,8 @@ class NotionClient:
             return "요약 제외", {"url": posting["url"]}
         existing = self.find_existing(posting)
         payload = {"properties": properties_for(posting, existing)}
+        if "회사 규모" in payload["properties"] and getattr(self, "company_size_type", "rich_text") == "select":
+            payload["properties"]["회사 규모"] = {"select": {"name": posting.get("company_size") or "미확인"}}
         if not existing:
             payload["properties"]["지원 상태"] = {getattr(self, "status_type", "status"): {"name": "검토 전"}}
         if existing:
