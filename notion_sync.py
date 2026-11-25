@@ -51,7 +51,7 @@ def deadline_from_text(text):
     return None
 
 
-def make_posting(company, title, url, field, evidence, source, source_id="", deadline=None):
+def make_posting(company, title, url, field, evidence, source, source_id="", deadline=None, company_size=""):
     if field not in FIELDS:
         raise ValueError("관심 공고만 저장할 수 있습니다.")
     if not all(isinstance(v, str) and v.strip() for v in (company, title, evidence, source)):
@@ -66,7 +66,7 @@ def make_posting(company, title, url, field, evidence, source, source_id="", dea
     basis = [source, str(source_id)] if source_id else [source, identity, company.strip(), title.strip()]
     key = hashlib.sha256(json.dumps(basis, ensure_ascii=False).encode()).hexdigest()
     return dict(company=company_name(company), title=title.strip(), url=url, field=field,
-                evidence=evidence.strip(), source=source.strip(), key=key, deadline=deadline, source_id=str(source_id))
+                evidence=evidence.strip(), source=source.strip(), key=key, deadline=deadline, source_id=str(source_id), company_size=company_size)
 
 
 def rich_text(value):
@@ -158,6 +158,10 @@ def properties_for(posting, existing=None):
         "관심 분야": {"select": {"name": FIELDS[posting["field"]]}},
         "출처": {"rich_text": source_text},
     }
+    if posting.get("company_size"):
+        result["회사 규모"] = {"rich_text": rich_text(posting["company_size"])}
+    elif not existing:
+        result["회사 규모"] = {"rich_text": rich_text("미확인")}
     # 첫 공고 링크를 유지하고 추가 출처는 클릭 가능한 출처 항목에 보관한다.
     if posting["url"] and not props.get("공고 링크", {}).get("url"):
         result["공고 링크"] = {"url": posting["url"]}
@@ -216,8 +220,18 @@ class NotionClient:
 
     def validate_schema(self):
         schema = self.request("GET", "data_sources/" + self.data_source_id)["properties"]
+        if "회사 규모" not in schema:
+            self.request("PATCH", "data_sources/" + self.data_source_id,
+                         {"properties": {"회사 규모": {"rich_text": {}}}})
+        elif schema["회사 규모"].get("type") != "rich_text":
+            raise NotionError("회사 규모 속성은 텍스트 유형이어야 합니다.")
         invalid = [name for name, kind in SCHEMA.items() if schema.get(name, {}).get("type") not in ({"status", "select"} if name == "지원 상태" else {kind})]
         options = {o["name"] for o in schema.get("관심 분야", {}).get("select", {}).get("options", [])}
+        if "회사 규모" not in schema:
+            self.request("PATCH", "data_sources/" + self.data_source_id,
+                         {"properties": {"회사 규모": {"rich_text": {}}}})
+        elif schema["회사 규모"].get("type") != "rich_text":
+            invalid.append("회사 규모")
         self.status_type = schema.get("지원 상태", {}).get("type", "status")
         statuses = {o["name"] for o in schema.get("지원 상태", {}).get(self.status_type, {}).get("options", [])}
         if invalid or not set(FIELDS.values()) <= options or "검토 전" not in statuses:

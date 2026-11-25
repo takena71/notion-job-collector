@@ -86,6 +86,17 @@ class EligibilityTests(unittest.TestCase):
         self.assertEqual(classify_interest(title, ["거래처 매출 집계 및 정산"])[0], "직무 제외")
         self.assertEqual(classify_interest("영업관리", ["거래처 매출 관리"])[0], "영업·영업관리")
 
+    def test_company_size_uses_labelled_company_metadata(self):
+        from bs4 import BeautifulSoup
+        from collectors import company_size
+        from notion_sync import properties_for, make_posting
+        soup = BeautifulSoup("<p>대기업 고객사와 협업</p><dl><dt>기업형태</dt><dd>중소기업</dd></dl>", "html.parser")
+        self.assertEqual(company_size(soup), "중소기업")
+        self.assertEqual(company_size(BeautifulSoup("<p>대기업 고객사</p>", "html.parser")), "")
+        posting = make_posting("예시", "영업", "https://example.org/1", "영업·영업관리", "업무", "사람인")
+        self.assertEqual(properties_for(posting)["회사 규모"]["rich_text"][0]["text"]["content"], "미확인")
+        self.assertNotIn("회사 규모", properties_for(posting, {"properties": {}}))
+
     def test_saramin_regular_results_only(self):
         from bs4 import BeautifulSoup
         from collectors import listing_cards

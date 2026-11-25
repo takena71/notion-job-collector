@@ -216,6 +216,17 @@ def labelled(soup, label):
     return ""
 
 
+def company_size(soup):
+    """기업정보에 명시된 기업 규모·형태만 수집한다."""
+    values = []
+    for label in soup.select("dt,th"):
+        if re.sub(r"\s+", "", text(label)) in {"기업규모", "기업형태"}:
+            value = text(label.find_next_sibling(["dd", "td"]))
+            if value:
+                values.append(value)
+    return " / ".join(dict.fromkeys(values))
+
+
 def listing_cards(key, soup):
     pattern = r"rec_idx=(\d+)" if key.startswith("saramin") else r"/Recruit/GI_Read/(\d+)"
     cards = []
@@ -256,6 +267,7 @@ def saramin_detail(reader, card, split_roles=False):
                                            "view_type": "mail_landing", "t_ref": "non-logged_relay_view",
                                            "t_ref_content": "category_new_rec"}).encode(), referer=card["url"])
         scope = soup.select_one(f"section.jview-0-{card['id']}")
+    card["company_size"] = company_size(scope or soup)
     soup = scope or soup
     company = text(soup.select_one(".jv_header .company,.jv_header .corp_name")) or card["company"]
     title = text(soup.select_one("h1.tit_job")) or card["title"]
@@ -377,7 +389,7 @@ def collect_site(key, limit=50, max_pages=5, *, recheck_cards=None):
             # 사람인 두 진입점은 같은 사이트 ID 공간을 사용한다.
             source = "사람인" if key.startswith("saramin") else name
             postings.append(make_posting(company, title, card["url"], result, evidence, source,
-                                         source_id or card["id"], deadline))
+                                         source_id or card["id"], deadline, company_size=card.get("company_size", "")))
             print(f"{name} | {company} | {result} | {title}\n근거: {evidence}\n{card['url']}", flush=True)
 
     def process(card):
